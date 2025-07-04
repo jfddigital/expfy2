@@ -1,20 +1,27 @@
 {
   "name": "expfy-live",
   "version": "1.0.0",
-  "description": "Projeto Expfy para gestão de lives e pagamentos via Pix",
+  "description": "App de lives com integração Pix via API EXPFY",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
-  "keywords": ["express", "live", "pix", "expfy", "node"],
+  "keywords": [
+    "pix",
+    "expfy",
+    "express",
+    "nodemailer",
+    "jwt",
+    "axios"
+  ],
   "author": "JFD",
   "license": "MIT",
   "dependencies": {
     "axios": "^1.6.7",
     "body-parser": "^1.20.2",
+    "dotenv": "^16.6.1",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
-    "nodemailer": "^6.9.1",
-    "dotenv": "^16.4.5"
+    "nodemailer": "^6.9.1"
   }
 }

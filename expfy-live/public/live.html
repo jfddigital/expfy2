@@ -1,18 +1,79 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Live Exclusiva</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Gerar Pagamento Pix</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 2em; background: #fff; text-align: center; }
-    iframe { width: 80%; height: 450px; border: none; margin-top: 2em; }
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 400px;
+      margin: 40px auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      background-color: #f9f9f9;
+    }
+    input, button {
+      display: block;
+      width: 100%;
+      margin-bottom: 15px;
+      padding: 10px;
+      font-size: 1em;
+    }
+    img {
+      margin-top: 20px;
+      max-width: 100%;
+    }
+    #resultadoPix {
+      text-align: center;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
-  <h1>🎬 Bem-vindo à nossa Live Exclusiva!</h1>
-  <p>Aproveite o conteúdo ao vivo. Esse acesso expira em 2 horas.</p>
+  <h2>Pagamento via Pix</h2>
+  <form id="pixForm">
+    <input type="text" name="nome" placeholder="Seu nome" required />
+    <input type="number" name="valor" placeholder="Valor (ex: 29.90)" step="0.01" required />
+    <button type="submit">Gerar Pix</button>
+  </form>
 
-  <!-- Substitua o src abaixo pela URL real da sua live (ex: YouTube, Vimeo ou player customizado) -->
-  <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+  <div id="resultadoPix"></div>
+
+  <script>
+    document.getElementById("pixForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const nome = e.target.nome.value;
+      const valor = e.target.valor.value;
+
+      try {
+        const response = await fetch("https://encrypt2.onrender.com/api/gerar-pix", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ nome, valor })
+        });
+
+        const data = await response.json();
+
+        if (data.qr_code_base64) {
+          document.getElementById("resultadoPix").innerHTML = `
+            <p>Pix gerado com sucesso!</p>
+            <img src="data:image/png;base64,${data.qr_code_base64}" alt="QR Code Pix" />
+            <p>Status: ${data.status}</p>
+            <p>Transaction ID: ${data.transaction_id}</p>
+          `;
+        } else {
+          document.getElementById("resultadoPix").innerText = "Erro ao gerar Pix. Tente novamente.";
+        }
+      } catch (err) {
+        document.getElementById("resultadoPix").innerText = "Falha na comunicação com o servidor.";
+        console.error("Erro:", err);
+      }
+    });
+  </script>
 </body>
 </html>
