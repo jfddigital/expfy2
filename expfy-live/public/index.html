@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Acesso à Live</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2em; background: #f7f7f7; }
+    h1 { color: #333; }
+    form { display: flex; flex-direction: column; max-width: 400px; }
+    input, button { margin: 0.5em 0; padding: 0.7em; font-size: 1em; }
+    #pix-container img { max-width: 300px; margin-top: 1em; }
+  </style>
+</head>
+<body>
+  <h1>Assista à nossa Live Exclusiva!</h1>
+  <p>Preencha os dados abaixo e gere o QR Code Pix para liberar seu acesso:</p>
+  <form id="form-pix">
+    <input type="text" name="nome" placeholder="Seu nome" required />
+    <input type="text" name="documento" placeholder="CPF" required />
+    <input type="email" name="email" placeholder="E-mail" required />
+    <button type="submit">Gerar QR Code Pix</button>
+  </form>
+  <div id="pix-container"></div>
+
+  <script>
+    document.getElementById("form-pix").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const form = e.target;
+      const dados = {
+        nome: form.nome.value,
+        documento: form.documento.value,
+        email: form.email.value
+      };
+
+      const res = await fetch("/api/gerar-pix", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dados)
+      });
+
+      const json = await res.json();
+      if (json.qr_code_url) {
+        document.getElementById("pix-container").innerHTML = `
+          <p>Escaneie o QR Code abaixo com seu app de Pix:</p>
+          <img src="${json.qr_code_url}" alt="QR Code Pix" />
+        `;
+      } else {
+        alert("Erro ao gerar Pix. Tente novamente.");
+      }
+    });
+  </script>
+</body>
+</html>
